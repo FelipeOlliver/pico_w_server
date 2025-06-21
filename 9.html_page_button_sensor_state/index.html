@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Controle - Pico W</title>
+    <style>
+        /* CSS para estilizar a página */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #1a73e8;
+            margin-bottom: 30px;
+        }
+
+        .sensor-data {
+            font-size: 1.5em;
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .sensor-data:last-child {
+            border-bottom: none;
+        }
+
+        .sensor-label {
+            font-weight: 500;
+        }
+
+        .sensor-value {
+            font-weight: bold;
+            color: #e67e22;
+            background-color: #fdf2e9;
+            padding: 5px 12px;
+            border-radius: 8px;
+        }
+        
+        #valor-botao-a, #valor-botao-b {
+            color: #27ae60;
+            background-color: #e9f7ef;
+        }
+        
+        #valor-botao-a.off, #valor-botao-b.off {
+             color: #c0392b;
+             background-color: #fbeee
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Painel de Controle - Pico W</h1>
+        
+        <div class="sensor-data">
+            <span class="sensor-label">🌡️ Temperatura:</span>
+            <span class="sensor-value" id="valor-temperatura">--</span>
+        </div>
+        
+        <div class="sensor-data">
+            <span class="sensor-label">🔘 Botão A:</span>
+            <span class="sensor-value" id="valor-botao-a">--</span>
+        </div>
+
+        <div class="sensor-data">
+            <span class="sensor-label">🔘 Botão B:</span>
+            <span class="sensor-value" id="valor-botao-b">--</span>
+        </div>
+
+        <div class="footer">
+            Última atualização: <span id="valor-atualizacao">Nunca</span>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURAÇÃO ---
+        const CLOUD_FUNCTION_URL = "https://get-pico-data-596248462529.southamerica-east1.run.app";
+
+        // --- LÓGICA DE ATUALIZAÇÃO ---
+
+        // Referências aos elementos HTML que vamos atualizar
+        const elTemperatura = document.getElementById("valor-temperatura");
+        const elBotaoA = document.getElementById("valor-botao-a");
+        const elBotaoB = document.getElementById("valor-botao-b");
+        const elAtualizacao = document.getElementById("valor-atualizacao");
+
+        // Função que busca os dados na nuvem
+        async function buscarDados() {
+            try {
+                // Faz a chamada para a nossa API na nuvem
+                const response = await fetch(CLOUD_FUNCTION_URL);
+                
+                // Se a resposta não for "OK" (ex: erro 404, 500), lança um erro
+                if (!response.ok) {
+                    throw new Error(`Erro na requisição: ${response.statusText}`);
+                }
+
+                // Converte a resposta em formato JSON
+                const dados = await response.json();
+
+                // Atualiza os elementos na página com os novos dados
+                elTemperatura.textContent = `${dados.temperatura}°C`;
+                elBotaoA.textContent = dados.botao_a;
+                elBotaoB.textContent = dados.botao_b;
+
+                // Estiliza o status do botão (ON/OFF)
+                elBotaoA.className = 'sensor-value ' + (dados.botao_a === 'ON' ? 'on' : 'off');
+                elBotaoB.className = 'sensor-value ' + (dados.botao_b === 'ON' ? 'on' : 'off');
+                
+                // Formata e exibe o horário da última atualização
+                const dataFormatada = new Date(dados.ultima_atualizacao).toLocaleTimeString('pt-BR');
+                elAtualizacao.textContent = dataFormatada;
+
+            } catch (error) {
+                // Se houver qualquer erro, exibe no console e na página
+                console.error("Falha ao buscar dados:", error);
+                elTemperatura.textContent = "Erro";
+                elBotaoA.textContent = "Erro";
+                elBotaoB.textContent = "Erro";
+            }
+        }
+
+        // --- INICIALIZAÇÃO ---
+
+        // Chama a função pela primeira vez assim que a página carrega
+        document.addEventListener("DOMContentLoaded", buscarDados);
+
+        // Configura para chamar a função 'buscarDados' repetidamente a cada 3 segundos
+        setInterval(buscarDados, 3000); // 3000 milissegundos = 3 segundos
+    </script>
+
+</body>
+</html>
