@@ -53,19 +53,19 @@ target_compile_definitions(hivemq_pin_sensor PRIVATE
     LWIP_ALTCP_TLS=1
     LWIP_ALTCP_TLS_MBEDTLS=1
     # Credenciais da sua rede Wi-Fi
-    WIFI_SSID="FELIPELIZ_2G"
-    WIFI_PASSWORD="f3l1p3l1z"
+    WIFI_SSID="WIFI_SSID"
+    WIFI_PASSWORD="WIFI_PASSWORD"
     # Endereço do broker MQTT
     # Para o HiveMQ público, use: "broker.hivemq.com"
-    MQTT_SERVER="122e9b90e6124c6aa9f91b2dd4ea18b6.s1.eu.hivemq.cloud"
+    MQTT_SERVER="broker.hivemq.com"
 
     # Porta segura do MQTT
     MQTT_PORT=8883 
 
     # Credenciais do seu cliente MQTT (usuário e senha)
     # Se o broker for aberto, pode deixar como ""
-    MQTT_USERNAME="admin"
-    MQTT_PASSWORD="Bitd0glab"
+    MQTT_USERNAME="MQTT_USERNAME"
+    MQTT_PASSWORD="MQTT_PASSWORD"
 )
 
 # Add the standard library to the build
