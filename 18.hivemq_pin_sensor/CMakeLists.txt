@@ -48,24 +48,10 @@ pico_enable_stdio_uart(hivemq_pin_sensor 0)
 pico_enable_stdio_usb(hivemq_pin_sensor 1)
 
 target_compile_definitions(hivemq_pin_sensor PRIVATE
-    # Habilita as funções ALTCP e TLS na biblioteca lwIP
-    LWIP_ALTCP=1
-    LWIP_ALTCP_TLS=1
-    LWIP_ALTCP_TLS_MBEDTLS=1
-    # Credenciais da sua rede Wi-Fi
     WIFI_SSID="WIFI_SSID"
-    WIFI_PASSWORD="WIFI_PASSWORD"
-    # Endereço do broker MQTT
-    # Para o HiveMQ público, use: "broker.hivemq.com"
+    WIFI_PASSWORD=" WIFI_PASSWORD"
     MQTT_SERVER="broker.hivemq.com"
-
-    # Porta segura do MQTT
-    MQTT_PORT=8883 
-
-    # Credenciais do seu cliente MQTT (usuário e senha)
-    # Se o broker for aberto, pode deixar como ""
-    MQTT_USERNAME="MQTT_USERNAME"
-    MQTT_PASSWORD="MQTT_PASSWORD"
+    MQTT_PORT=1883
 )
 
 # Add the standard library to the build
